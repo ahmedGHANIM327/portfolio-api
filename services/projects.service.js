@@ -1,4 +1,6 @@
 const Project = require('../models/projects');
+const fileStorageService = require('./filestorage');
+const { prop } = require('ramda');
 
 const projectsService = (() => {
   const addOne = async (data) => {
@@ -22,13 +24,18 @@ const projectsService = (() => {
   };
 
   const delOne = async (id) => {
-    const project = await Project.findByIdAndRemove(id);
+    const project = await Project.findByIdAndDelete(id);
     return project;
   };
 
-  const delMany = async (ids) => {
-    const projects = await Project.deleteMany({ _id: { $in: ids } });
-    return projects;
+  const delFiles = async (id, fileType) => {
+    const project = await Project.findById(id);
+    for (const type of fileType) {
+      if (prop(type, project)) {
+        const result = await fileStorageService.deleteFile(prop(type, project));
+        if (prop('error', result)) throw new Error(prop('error', result));
+      }
+    }
   };
 
   return {
@@ -37,7 +44,7 @@ const projectsService = (() => {
     getAll,
     updateOne,
     delOne,
-    delMany
+    delFiles
   };
 })();
 

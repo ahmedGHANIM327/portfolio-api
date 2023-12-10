@@ -7,6 +7,8 @@ const InterestsSchema = new mongoose.Schema({
   },
   description: String,
   photo: String
+}, {
+  timestamps: true
 });
 
 const Interests = mongoose.model('interests', InterestsSchema);

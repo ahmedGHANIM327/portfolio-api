@@ -22,13 +22,8 @@ const languagesService = (() => {
   };
 
   const delOne = async (id) => {
-    const language = await Language.findByIdAndRemove(id);
+    const language = await Language.findByIdAndDelete(id);
     return language;
-  };
-
-  const delMany = async (ids) => {
-    const languages = await Language.deleteMany({ _id: { $in: ids } });
-    return languages;
   };
 
   return {
@@ -36,8 +31,7 @@ const languagesService = (() => {
     getById,
     getAll,
     updateOne,
-    delOne,
-    delMany
+    delOne
   };
 })();
 

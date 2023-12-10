@@ -22,13 +22,8 @@ const linksService = (() => {
   };
 
   const delOne = async (id) => {
-    const link = await Link.findByIdAndRemove(id);
+    const link = await Link.findByIdAndDelete(id);
     return link;
-  };
-
-  const delMany = async (ids) => {
-    const links = await Link.deleteMany({ _id: { $in: ids } });
-    return links;
   };
 
   return {
@@ -36,8 +31,7 @@ const linksService = (() => {
     getById,
     getAll,
     updateOne,
-    delOne,
-    delMany
+    delOne
   };
 })();
 

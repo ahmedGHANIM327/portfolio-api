@@ -10,13 +10,14 @@ const certificationsSchema = new mongoose.Schema({
     required: true
   },
   dateOfIssue: {
-    type: Date,
-    required: true
+    type: Date
   },
   expiryDate: Date,
   file: String,
   website: String,
   description: String
+}, {
+  timestamps: true
 });
 
 const Certifications = mongoose.model('certifications', certificationsSchema);

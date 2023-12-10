@@ -22,13 +22,8 @@ const experiencesService = (() => {
   };
 
   const delOne = async (id) => {
-    const experience = await Experience.findByIdAndRemove(id);
+    const experience = await Experience.findByIdAndDelete(id);
     return experience;
-  };
-
-  const delMany = async (ids) => {
-    const experiences = await Experience.deleteMany({ _id: { $in: ids } });
-    return experiences;
   };
 
   return {
@@ -36,8 +31,7 @@ const experiencesService = (() => {
     getById,
     getAll,
     updateOne,
-    delOne,
-    delMany
+    delOne
   };
 })();
 

@@ -9,6 +9,8 @@ const LinksSchema = new mongoose.Schema({
     type: String,
     required: true
   }
+}, {
+  timestamps: true
 });
 
 const Links = mongoose.model('links', LinksSchema);

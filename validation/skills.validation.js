@@ -5,6 +5,7 @@ const skillsValidationSchema = Joi.object({
   name: Joi.string().required(),
   category: Joi.string().required(),
   level: Joi.string().required(),
+  icon: Joi.string(),
   description: Joi.string()
 });
 

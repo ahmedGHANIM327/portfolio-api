@@ -25,16 +25,9 @@ const educationsSchema = new mongoose.Schema({
   description: String,
   achievements: [String],
   skills: [String],
-  diploma: {
-    name: {
-      type: String,
-      required: true
-    },
-    link: {
-      type: String,
-      required: true
-    }
-  }
+  diploma: String
+}, {
+  timestamps: true
 });
 
 const Educations = mongoose.model('educations', educationsSchema);

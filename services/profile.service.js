@@ -1,7 +1,8 @@
+const { length, equals } = require('ramda');
 const Profile = require('../models/profile');
 
 const profileService = (() => {
-  const saveProfile = async (data) => {
+  const createProfile = async (data) => {
     const profile = new Profile(data);
     return await profile.save();
   };
@@ -11,21 +12,21 @@ const profileService = (() => {
     return profile;
   };
 
-  const updateProfile = async (id, updatedData) => {
+  const updateProfile = async (updatedData) => {
     const profile = await Profile.findOneAndUpdate({}, updatedData, { new: true });
     return profile;
   };
 
-  const delProfile = async () => {
-    const profile = await Profile.findOneAndDelete({});
-    return profile;
+  const isProfileCreated = async () => {
+    const profiles = await await Profile.find();
+    return equals(length(profiles), 1);
   };
 
   return {
-    saveProfile,
+    createProfile,
     getProfile,
     updateProfile,
-    delProfile
+    isProfileCreated
   };
 })();
 

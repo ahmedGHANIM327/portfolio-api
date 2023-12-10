@@ -11,10 +11,7 @@ const educationsValidationSchema = Joi.object({
   description: Joi.string(),
   achievements: Joi.array().items(Joi.string()),
   skills: Joi.array().items(Joi.string()),
-  diploma: Joi.object({
-    name: Joi.string().required(),
-    link: Joi.string().required()
-  }).required()
+  diploma: Joi.string()
 });
 
 const validateEducationsData = (data) => {

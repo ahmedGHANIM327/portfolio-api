@@ -9,6 +9,8 @@ const languagesSchema = new mongoose.Schema({
     type: String,
     required: true
   }
+}, {
+  timestamps: true
 });
 
 const Languages = mongoose.model('languages', languagesSchema);

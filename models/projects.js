@@ -43,6 +43,8 @@ const projectsSchema = new mongoose.Schema({
     phone: String,
     website: String
   }
+}, {
+  timestamps: true
 });
 
 const Projects = mongoose.model('projects', projectsSchema);

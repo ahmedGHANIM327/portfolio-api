@@ -1,4 +1,6 @@
 const Skill = require('../models/skills');
+const fileStorageService = require('./filestorage');
+const { prop } = require('ramda');
 
 const skillsService = (() => {
   const addOne = async (data) => {
@@ -22,13 +24,18 @@ const skillsService = (() => {
   };
 
   const delOne = async (id) => {
-    const skill = await Skill.findByIdAndRemove(id);
+    const skill = await Skill.findByIdAndDelete(id);
     return skill;
   };
 
-  const delMany = async (ids) => {
-    const skills = await Skill.deleteMany({ _id: { $in: ids } });
-    return skills;
+  const delFiles = async (id, fileType) => {
+    const skill = await Skill.findById(id);
+    for (const type of fileType) {
+      if (prop(type, skill)) {
+        const result = await fileStorageService.deleteFile(prop(type, skill));
+        if (prop('error', result)) throw new Error(prop('error', result));
+      }
+    }
   };
 
   return {
@@ -37,7 +44,7 @@ const skillsService = (() => {
     getAll,
     updateOne,
     delOne,
-    delMany
+    delFiles
   };
 })();
 

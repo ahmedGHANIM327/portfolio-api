@@ -6,7 +6,6 @@ const certeficationsValidationSchema = Joi.object({
   organization: Joi.string().required(),
   dateOfIssue: Joi.date().required(),
   expiryDate: Joi.date(),
-  file: Joi.string(),
   website: Joi.string(),
   description: Joi.string()
 });

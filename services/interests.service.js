@@ -1,4 +1,6 @@
 const Interest = require('../models/interests');
+const fileStorageService = require('./filestorage');
+const { prop } = require('ramda');
 
 const interestsService = (() => {
   const addOne = async (data) => {
@@ -22,13 +24,18 @@ const interestsService = (() => {
   };
 
   const delOne = async (id) => {
-    const interest = await Interest.findByIdAndRemove(id);
+    const interest = await Interest.findByIdAndDelete(id);
     return interest;
   };
 
-  const delMany = async (ids) => {
-    const interests = await Interest.deleteMany({ _id: { $in: ids } });
-    return interests;
+  const delFiles = async (id, fileType) => {
+    const interest = await Interest.findById(id);
+    for (const type of fileType) {
+      if (prop(type, interest)) {
+        const result = await fileStorageService.deleteFile(prop(type, interest));
+        if (prop('error', result)) throw new Error(prop('error', result));
+      }
+    }
   };
 
   return {
@@ -37,7 +44,7 @@ const interestsService = (() => {
     getAll,
     updateOne,
     delOne,
-    delMany
+    delFiles
   };
 })();
 

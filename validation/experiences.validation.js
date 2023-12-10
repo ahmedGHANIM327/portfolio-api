@@ -19,7 +19,6 @@ const experiencesValidationSchema = Joi.object({
   description: Joi.string(),
   achievements: Joi.array().items(Joi.string()),
   skillsAcquired: Joi.array().items(Joi.string()),
-  jobRelatedDocuments: Joi.array().items(Joi.string()),
   projectLink: Joi.string()
 });
 

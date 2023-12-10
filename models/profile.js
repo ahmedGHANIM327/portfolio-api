@@ -25,6 +25,8 @@ const profileSchema = new mongoose.Schema({
   cv: String,
   photo: String,
   nationality: String
+}, {
+  timestamps: true
 });
 
 const Profile = mongoose.model('profile', profileSchema);

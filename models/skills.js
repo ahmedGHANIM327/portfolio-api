@@ -13,7 +13,10 @@ const skillsSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  icon: String,
   description: String
+}, {
+  timestamps: true
 });
 
 const Skills = mongoose.model('skills', skillsSchema);

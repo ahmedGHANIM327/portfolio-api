@@ -36,8 +36,9 @@ const experiencesSchema = new mongoose.Schema({
   description: String,
   achievements: [String],
   skillsAcquired: [String],
-  jobRelatedDocuments: [String],
   projectLink: String
+}, {
+  timestamps: true
 });
 
 const Experiences = mongoose.model('experiences', experiencesSchema);
