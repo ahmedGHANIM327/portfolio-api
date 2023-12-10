@@ -80,7 +80,7 @@ const profileController = (() => {
   const updateProfile = async (req, res) => {
     const isProfileCreated = await profileService.isProfileCreated();
     if (!isProfileCreated) {
-      throw new Error('PROFILE_NOT_CREATED');
+      throw new Error('PROFILE_NOT_CREATED_YET');
     }
 
     // validate Id
