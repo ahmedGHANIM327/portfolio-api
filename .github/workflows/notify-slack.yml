@@ -1,0 +1,19 @@
+name: Notify Slack on PR creation
+
+on:
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  notify-slack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Slack
+        uses: <your-username>/slack-notification-action@main
+        with:
+          token: ${{ secrets.SLACK_TOKEN }}
+          channel: '#your-slack-channel'
+          prUrl: ${{ github.event.pull_request.html_url }}
+          author: ${{ github.event.pull_request.user.login }}
+          repoName: ${{ github.repository }}
