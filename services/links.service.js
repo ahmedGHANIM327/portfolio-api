@@ -11,6 +11,11 @@ const linksService = (() => {
     return link;
   };
 
+  const getUserLink = async (userId) => {
+    const links = await Link.find({ user: userId });
+    return links;
+  };
+
   const getAll = async () => {
     const links = await Link.find();
     return links;
@@ -31,7 +36,8 @@ const linksService = (() => {
     getById,
     getAll,
     updateOne,
-    delOne
+    delOne,
+    getUserLink
   };
 })();
 

@@ -19,6 +19,10 @@ const educationsController = (() => {
     // Validate data getting from request
     validateEducationsData(data);
 
+    const user = prop('currentUser', req);
+
+    data.user = user;
+
     // Get file from request
     const diploma = prop('file', req);
 
@@ -28,7 +32,7 @@ const educationsController = (() => {
       validateFile(['pdf'], diploma);
 
       // Store diploma to storage
-      const resultStorage = await fileStorageService.saveFile('educations', diploma);
+      const resultStorage = await fileStorageService.saveFile('educations', diploma, user);
 
       // verify diploma is stored successfuly
       if (!prop('ok', resultStorage)) {
@@ -59,6 +63,21 @@ const educationsController = (() => {
     res.status(200).json({ ok: true, data: education });
   };
 
+  const getUserEducations = async (req, res) => {
+    // Get & validate user Id
+    const userId = prop('currentUser', req);
+
+    validateId(userId);
+
+    // get data and verify if it exists
+    const educations = await educationsService.getUserEducations(userId);
+    if (!educations) throw new Error('NO_EDUCATION_FOUND');
+
+    await getFilesAccessLinks(educations, ['diploma']);
+
+    res.status(200).json({ ok: true, data: educations });
+  };
+
   const getAll = async (req, res) => {
     // get data and verify if it exists
     const educations = await educationsService.getAll();
@@ -80,6 +99,8 @@ const educationsController = (() => {
     // Validate updatedData getting from request
     validateEducationsData(updatedData);
 
+    const user = prop('currentUser', req);
+
     // Get file from request
     const diploma = prop('file', req);
 
@@ -89,7 +110,7 @@ const educationsController = (() => {
       validateFile(['pdf'], diploma);
 
       // Store file to storage
-      const resultStorage = await fileStorageService.saveFile('educations', diploma);
+      const resultStorage = await fileStorageService.saveFile('educations', diploma, user);
 
       // verify file is stored successfuly
       if (!prop('ok', resultStorage)) {
@@ -98,12 +119,10 @@ const educationsController = (() => {
 
       // Create our final data
       updatedData.diploma = prop('fileName', resultStorage);
-    } else {
-      updatedData.diploma = null;
-    }
 
-    // Del old file
-    await educationsService.delFiles(id, ['diploma']);
+      // Del old file
+      await educationsService.delFiles(id, ['diploma']);
+    }
 
     // Add data to db
     await educationsService.updateOne(id, updatedData);
@@ -130,7 +149,8 @@ const educationsController = (() => {
     getById,
     getAll,
     updateOne,
-    delOne
+    delOne,
+    getUserEducations
   };
 })();
 

@@ -42,6 +42,10 @@ const projectsSchema = new mongoose.Schema({
     email: String,
     phone: String,
     website: String
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
   }
 }, {
   timestamps: true

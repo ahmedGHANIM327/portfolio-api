@@ -12,9 +12,12 @@ const {
   validateUserData,
   validateUserEmail,
   validateUserPassword,
-  validateUserName
+  validateUserName,
+  validateUserStatus
 } = require('./users.validation');
 const validateFile = require('./filestorage.validation');
+
+const { validateApiKeyLabel } = require('./apikeys.validation');
 
 module.exports = {
   validateCerteficationsData,
@@ -31,5 +34,7 @@ module.exports = {
   validateUserEmail,
   validateUserName,
   validateUserPassword,
-  validateFile
+  validateFile,
+  validateUserStatus,
+  validateApiKeyLabel
 };

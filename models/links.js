@@ -8,6 +8,10 @@ const LinksSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
   }
 }, {
   timestamps: true

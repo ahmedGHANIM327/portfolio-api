@@ -13,6 +13,11 @@ const skillsService = (() => {
     return skill;
   };
 
+  const getUserSkills = async (userId) => {
+    const skills = await Skill.find({ user: userId });
+    return skills;
+  };
+
   const getAll = async () => {
     const skills = await Skill.find();
     return skills;
@@ -44,7 +49,8 @@ const skillsService = (() => {
     getAll,
     updateOne,
     delOne,
-    delFiles
+    delFiles,
+    getUserSkills
   };
 })();
 

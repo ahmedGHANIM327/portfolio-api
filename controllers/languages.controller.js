@@ -12,6 +12,10 @@ const languagesController = (() => {
     // Validate data getting from request
     validateLanguagesData(data);
 
+    const user = prop('currentUser', req);
+
+    data.user = user;
+
     // Add data to db
     await languagesService.addOne(data);
 
@@ -28,6 +32,18 @@ const languagesController = (() => {
     if (!language) throw new Error('LANGUAGE_NOT_FOUND');
 
     res.status(200).json({ ok: true, data: language });
+  };
+
+  const getUserLanguages = async (req, res) => {
+    const userId = prop('currentUser', req);
+
+    validateId(userId);
+
+    // get data and verify if it exists
+    const languages = await languagesService.getUserLanguages(userId);
+    if (!languages) throw new Error('NO_LANGUAGE_FOUND');
+
+    res.status(200).json({ ok: true, data: languages });
   };
 
   const getAll = async (req, res) => {
@@ -71,7 +87,8 @@ const languagesController = (() => {
     getById,
     getAll,
     updateOne,
-    delOne
+    delOne,
+    getUserLanguages
   };
 })();
 

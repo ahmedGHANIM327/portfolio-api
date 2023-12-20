@@ -19,6 +19,10 @@ const interestsController = (() => {
     // Validate data getting from request
     validateInterestsData(data);
 
+    const user = prop('currentUser', req);
+
+    data.user = user;
+
     // Get file from request
     const photo = prop('file', req);
 
@@ -28,7 +32,7 @@ const interestsController = (() => {
       validateFile(['png', 'jpg', 'jpeg'], photo);
 
       // Store photo to storage
-      const resultStorage = await fileStorageService.saveFile('interests', photo);
+      const resultStorage = await fileStorageService.saveFile('interests', photo, user);
 
       // verify photo is stored successfuly
       if (!prop('ok', resultStorage)) {
@@ -59,6 +63,20 @@ const interestsController = (() => {
     res.status(200).json({ ok: true, data: interest });
   };
 
+  const getUserInterests = async (req, res) => {
+    const userId = prop('currentUser', req);
+
+    validateId(userId);
+
+    // get data and verify if it exists
+    const interests = await interestsService.getUserInterests(userId);
+    if (!interests) throw new Error('NO_INTEREST_FOUND');
+
+    await getFilesAccessLinks(interests, ['photo']);
+
+    res.status(200).json({ ok: true, data: interests });
+  };
+
   const getAll = async (req, res) => {
     // get data and verify if it exists
     const interests = await interestsService.getAll();
@@ -80,6 +98,8 @@ const interestsController = (() => {
     // Validate updatedData getting from request
     validateInterestsData(updatedData);
 
+    const user = prop('currentUser', req);
+
     // Get file from request
     const photo = prop('file', req);
 
@@ -89,7 +109,7 @@ const interestsController = (() => {
       validateFile(['png', 'jpg', 'jpeg'], photo);
 
       // Store file to storage
-      const resultStorage = await fileStorageService.saveFile('interests', photo);
+      const resultStorage = await fileStorageService.saveFile('interests', photo, user);
 
       // verify file is stored successfuly
       if (!prop('ok', resultStorage)) {
@@ -98,12 +118,10 @@ const interestsController = (() => {
 
       // Create our final data
       updatedData.photo = prop('fileName', resultStorage);
-    } else {
-      updatedData.photo = null;
-    }
 
-    // Del old file
-    await interestsService.delFiles(id, ['photo']);
+      // Del old file
+      await interestsService.delFiles(id, ['photo']);
+    }
 
     // Add data to db
     await interestsService.updateOne(id, updatedData);
@@ -130,7 +148,8 @@ const interestsController = (() => {
     getById,
     getAll,
     updateOne,
-    delOne
+    delOne,
+    getUserInterests
   };
 })();
 

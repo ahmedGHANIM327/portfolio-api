@@ -8,6 +8,8 @@ const linksRouter = require('./links.routes');
 const skillsRouter = require('./skills.routes');
 const projectsRouter = require('./projects.routes');
 const profileRouter = require('./profile.routes');
+const usersRouter = require('./users.routes');
+const apikeysRouter = require('./apikeys.routes');
 const handleError = require('../middleware/errorHandler.middleware');
 
 module.exports = function (app) {
@@ -21,5 +23,7 @@ module.exports = function (app) {
   app.use('/skills', skillsRouter);
   app.use('/projects', projectsRouter);
   app.use('/profile', profileRouter);
+  app.use('/users', usersRouter);
+  app.use('/apikeys', apikeysRouter);
   app.use(handleError);
 };

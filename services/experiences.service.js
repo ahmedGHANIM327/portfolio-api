@@ -11,6 +11,11 @@ const experiencesService = (() => {
     return experience;
   };
 
+  const getUserExperiences = async (userId) => {
+    const experiences = await Experience.find({ user: userId });
+    return experiences;
+  };
+
   const getAll = async () => {
     const experiences = await Experience.find();
     return experiences;
@@ -31,7 +36,8 @@ const experiencesService = (() => {
     getById,
     getAll,
     updateOne,
-    delOne
+    delOne,
+    getUserExperiences
   };
 })();
 

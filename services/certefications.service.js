@@ -18,6 +18,11 @@ const certeficationsService = (() => {
     return certefications;
   };
 
+  const getUserCertefications = async (userId) => {
+    const certefications = await Certefication.find({ user: userId });
+    return certefications;
+  };
+
   const updateOne = async (id, updatedData) => {
     const certefication = await Certefication.findByIdAndUpdate(id, updatedData, { new: true });
     return certefication;
@@ -44,7 +49,8 @@ const certeficationsService = (() => {
     getAll,
     updateOne,
     delOne,
-    delFiles
+    delFiles,
+    getUserCertefications
   };
 })();
 

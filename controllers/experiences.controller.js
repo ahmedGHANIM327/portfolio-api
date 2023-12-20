@@ -12,6 +12,10 @@ const experiencesController = (() => {
     // Validate data getting from request
     validateExperiencesData(data);
 
+    const user = prop('currentUser', req);
+
+    data.user = user;
+
     // Add data to db
     await experiencesService.addOne(data);
 
@@ -28,6 +32,19 @@ const experiencesController = (() => {
     if (!experience) throw new Error('EXPERIENCE_NOT_FOUND');
 
     res.status(200).json({ ok: true, data: experience });
+  };
+
+  const getUserExperiences = async (req, res) => {
+    // Get & validate user Id
+    const userId = prop('currentUser', req);
+
+    validateId(userId);
+
+    // get data and verify if it exists
+    const experiences = await experiencesService.getUserExperiences(userId);
+    if (!experiences) throw new Error('NO_EXPERIENCE_FOUND');
+
+    res.status(200).json({ ok: true, data: experiences });
   };
 
   const getAll = async (req, res) => {
@@ -71,7 +88,8 @@ const experiencesController = (() => {
     getById,
     getAll,
     updateOne,
-    delOne
+    delOne,
+    getUserExperiences
   };
 })();
 

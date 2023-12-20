@@ -19,6 +19,10 @@ const skillsController = (() => {
     // Validate data getting from request
     validateSkillsData(data);
 
+    const user = prop('currentUser', req);
+
+    data.user = user;
+
     // Get file from request
     const icon = prop('file', req);
 
@@ -28,7 +32,7 @@ const skillsController = (() => {
       validateFile(['png', 'jpg', 'jpeg'], icon);
 
       // Store icon to storage
-      const resultStorage = await fileStorageService.saveFile('skills', icon);
+      const resultStorage = await fileStorageService.saveFile('skills', icon, user);
 
       // verify icon is stored successfuly
       if (!prop('ok', resultStorage)) {
@@ -59,6 +63,21 @@ const skillsController = (() => {
     res.status(200).json({ ok: true, data: skill });
   };
 
+  const getUserSkills = async (req, res) => {
+    // Get & validate user Id
+    const userId = prop('currentUser', req);
+
+    validateId(userId);
+
+    // get data and verify if it exists
+    const skills = await skillsService.getUserSkills(userId);
+    if (!skills) throw new Error('NO_SKILL_FOUND');
+
+    await getFilesAccessLinks(skills, ['icon']);
+
+    res.status(200).json({ ok: true, data: skills });
+  };
+
   const getAll = async (req, res) => {
     // get data and verify if it exists
     const skills = await skillsService.getAll();
@@ -80,6 +99,8 @@ const skillsController = (() => {
     // Validate updatedData getting from request
     validateSkillsData(updatedData);
 
+    const user = prop('currentUser', req);
+
     // Get file from request
     const icon = prop('file', req);
 
@@ -89,7 +110,7 @@ const skillsController = (() => {
       validateFile(['png', 'jpg', 'jpeg'], icon);
 
       // Store file to storage
-      const resultStorage = await fileStorageService.saveFile('skills', icon);
+      const resultStorage = await fileStorageService.saveFile('skills', icon, user);
 
       // verify file is stored successfuly
       if (!prop('ok', resultStorage)) {
@@ -98,12 +119,10 @@ const skillsController = (() => {
 
       // Create our final data
       updatedData.icon = prop('fileName', resultStorage);
-    } else {
-      updatedData.icon = null;
-    }
 
-    // Del old file
-    await skillsService.delFiles(id, ['icon']);
+      // Del old file
+      await skillsService.delFiles(id, ['icon']);
+    }
 
     // Add data to db
     await skillsService.updateOne(id, updatedData);
@@ -130,7 +149,8 @@ const skillsController = (() => {
     getById,
     getAll,
     updateOne,
-    delOne
+    delOne,
+    getUserSkills
   };
 })();
 

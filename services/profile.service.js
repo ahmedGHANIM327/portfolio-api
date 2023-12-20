@@ -7,24 +7,30 @@ const profileService = (() => {
     return await profile.save();
   };
 
-  const getProfile = async () => {
-    const profile = await await Profile.findOne();
+  const getProfile = async (userId) => {
+    const profile = await Profile.findOne({ user: userId });
     return profile;
   };
 
-  const updateProfile = async (updatedData) => {
-    const profile = await Profile.findOneAndUpdate({}, updatedData, { new: true });
+  const getAllProfiles = async () => {
+    const profiles = await Profile.find();
+    return profiles;
+  };
+
+  const updateProfile = async (userId, updatedData) => {
+    const profile = await Profile.findOneAndUpdate({ user: userId }, updatedData, { new: true });
     return profile;
   };
 
-  const isProfileCreated = async () => {
-    const profiles = await await Profile.find();
+  const isProfileCreated = async (userId) => {
+    const profiles = await Profile.find({ user: userId });
     return equals(length(profiles), 1);
   };
 
   return {
     createProfile,
     getProfile,
+    getAllProfiles,
     updateProfile,
     isProfileCreated
   };

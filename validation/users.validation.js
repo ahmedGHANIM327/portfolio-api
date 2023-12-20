@@ -20,7 +20,7 @@ const userSchema = Joi.object({
 });
 
 const userNameSchema = Joi.object({
-  name: Joi.string().regex(/^[a-zA-Z\s]*$/).min(5).required()
+  fullName: Joi.string().regex(/^[a-zA-Z\s]*$/).min(5).required()
 });
 
 const userPasswordSchema = Joi.object({
@@ -31,6 +31,10 @@ const userEmailSchema = Joi.object({
   email: Joi.string().email().required()
 });
 
+const userStatusSchema = Joi.object({
+  status: Joi.string().valid('WAITING', 'ACTIVE', 'BLOCKED').required()
+});
+
 const validateUserData = (data) => {
   const { error } = userSchema.validate(data);
 
@@ -39,8 +43,8 @@ const validateUserData = (data) => {
   }
 };
 
-const validateUserName = (name) => {
-  const { error } = userNameSchema.validate(name);
+const validateUserName = (fullName) => {
+  const { error } = userNameSchema.validate({ fullName });
 
   if (error) {
     throw new Error(path(['details', 0, 'message'], error));
@@ -48,7 +52,7 @@ const validateUserName = (name) => {
 };
 
 const validateUserEmail = (email) => {
-  const { error } = userEmailSchema.validate(email);
+  const { error } = userEmailSchema.validate({ email });
 
   if (error) {
     throw new Error(path(['details', 0, 'message'], error));
@@ -56,7 +60,15 @@ const validateUserEmail = (email) => {
 };
 
 const validateUserPassword = (password) => {
-  const { error } = userPasswordSchema.validate(password);
+  const { error } = userPasswordSchema.validate({ password });
+
+  if (error) {
+    throw new Error(path(['details', 0, 'message'], error));
+  }
+};
+
+const validateUserStatus = (status) => {
+  const { error } = userStatusSchema.validate({ status });
 
   if (error) {
     throw new Error(path(['details', 0, 'message'], error));
@@ -67,5 +79,6 @@ module.exports = {
   validateUserData,
   validateUserName,
   validateUserEmail,
-  validateUserPassword
+  validateUserPassword,
+  validateUserStatus
 };

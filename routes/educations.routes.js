@@ -1,6 +1,7 @@
 const express = require('express');
 const educationsController = require('../controllers/educations.controller');
 const multer = require('multer');
+const userAuthMiddleware = require('../middleware/userAuthMiddleware');
 
 const router = express.Router();
 
@@ -8,10 +9,11 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 // Define routes
-router.post('/', upload.single('diploma'), educationsController.addOne);
-router.get('/:id', educationsController.getById);
+router.post('/', userAuthMiddleware, upload.single('diploma'), educationsController.addOne);
+router.get('/user', userAuthMiddleware, educationsController.getUserEducations);
+router.get('/:id', userAuthMiddleware, educationsController.getById);
 router.get('/', educationsController.getAll);
-router.put('/:id', upload.single('diploma'), educationsController.updateOne);
-router.delete('/:id', educationsController.delOne);
+router.put('/:id', userAuthMiddleware, upload.single('diploma'), educationsController.updateOne);
+router.delete('/:id', userAuthMiddleware, educationsController.delOne);
 
 module.exports = router;

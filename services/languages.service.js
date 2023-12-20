@@ -11,6 +11,11 @@ const languagesService = (() => {
     return language;
   };
 
+  const getUserLanguages = async (userId) => {
+    const languages = await Language.find({ user: userId });
+    return languages;
+  };
+
   const getAll = async () => {
     const languages = await Language.find();
     return languages;
@@ -31,7 +36,8 @@ const languagesService = (() => {
     getById,
     getAll,
     updateOne,
-    delOne
+    delOne,
+    getUserLanguages
   };
 })();
 

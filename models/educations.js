@@ -21,6 +21,10 @@ const educationsSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
   expectedEndDate: Date,
   description: String,
   achievements: [String],

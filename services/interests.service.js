@@ -13,6 +13,11 @@ const interestsService = (() => {
     return interest;
   };
 
+  const getUserInterests = async (userId) => {
+    const interests = await Interest.find({ user: userId });
+    return interests;
+  };
+
   const getAll = async () => {
     const interests = await Interest.find();
     return interests;
@@ -44,7 +49,8 @@ const interestsService = (() => {
     getAll,
     updateOne,
     delOne,
-    delFiles
+    delFiles,
+    getUserInterests
   };
 })();
 

@@ -6,18 +6,23 @@ const usersService = (() => {
     return await user.save();
   };
 
-  const updateUserName = async (newName) => {
-    const user = await User.findOneAndUpdate({ fullName: newName }, { new: true });
+  const updateUserName = async (id, newName) => {
+    const user = await User.findByIdAndUpdate(id, { fullName: newName }, { new: true });
     return user;
   };
 
-  const updateUserEmail = async (newEmail) => {
-    const user = await User.findOneAndUpdate({ email: newEmail }, { new: true });
+  const updateUserEmail = async (id, newEmail) => {
+    const user = await User.findByIdAndUpdate(id, { email: newEmail }, { new: true });
     return user;
   };
 
-  const updateUserPassword = async (newPassword) => {
-    const user = await User.findOneAndUpdate({ password: newPassword }, { new: true });
+  const updateUserPassword = async (id, newPassword) => {
+    const user = await User.findByIdAndUpdate(id, { password: newPassword }, { new: true });
+    return user;
+  };
+
+  const updateUserStatus = async (id, newStatus) => {
+    const user = await User.findByIdAndUpdate(id, { status: newStatus }, { new: true });
     return user;
   };
 
@@ -26,12 +31,31 @@ const usersService = (() => {
     return user;
   };
 
+  const getAllUsers = async () => {
+    const users = await User.find();
+    return users;
+  };
+
+  const getUserById = async (id) => {
+    const user = await User.findById(id);
+    return user;
+  };
+
+  const delUserById = async (id) => {
+    const user = await User.findByIdAndDelete(id);
+    return user;
+  };
+
   return {
     createUser,
     updateUserName,
     updateUserEmail,
     updateUserPassword,
-    getUserByEmail
+    getUserByEmail,
+    updateUserStatus,
+    getUserById,
+    getAllUsers,
+    delUserById
   };
 })();
 

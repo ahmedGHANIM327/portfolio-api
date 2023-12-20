@@ -15,12 +15,12 @@ const fileStorageService = (() => {
     return url;
   };
 
-  const saveFile = async (fileCategory, file) => {
+  const saveFile = async (fileCategory, file, user) => {
     try {
       const fileName = prop('originalname', file);
       const fileBuffer = prop('buffer', file);
       const uniqueFileName = generateUniqueFileName(fileCategory, fileName);
-      const fileBucket = Bucket.file(`${fileCategory}/${uniqueFileName}`);
+      const fileBucket = Bucket.file(`${user}/${fileCategory}/${uniqueFileName}`);
       await fileBucket.save(fileBuffer);
       return { ok: true, fileName: prop('name', fileBucket) };
     } catch (error) {

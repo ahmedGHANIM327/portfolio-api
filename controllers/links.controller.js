@@ -12,6 +12,10 @@ const linksController = (() => {
     // Validate data getting from request
     validateLinksData(data);
 
+    const user = prop('currentUser', req);
+
+    data.user = user;
+
     // Add data to db
     await linksService.addOne(data);
 
@@ -28,6 +32,18 @@ const linksController = (() => {
     if (!link) throw new Error('LINK_NOT_FOUND');
 
     res.status(200).json({ ok: true, data: link });
+  };
+
+  const getUserLinks = async (req, res) => {
+    const userId = prop('currentUser', req);
+
+    validateId(userId);
+
+    // get data and verify if it exists
+    const links = await linksService.getUserLink(userId);
+    if (!links) throw new Error('NO_LINK_FOUND');
+
+    res.status(200).json({ ok: true, data: links });
   };
 
   const getAll = async (req, res) => {
@@ -71,7 +87,8 @@ const linksController = (() => {
     getById,
     getAll,
     updateOne,
-    delOne
+    delOne,
+    getUserLinks
   };
 })();
 

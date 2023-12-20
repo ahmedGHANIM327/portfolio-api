@@ -31,6 +31,10 @@ const experiencesSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
   endDate: Date,
   sector: String,
   description: String,

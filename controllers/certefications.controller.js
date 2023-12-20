@@ -22,6 +22,10 @@ const certeficationsController = (() => {
     // Validate data getting from request
     validateCerteficationsData(data);
 
+    const user = prop('currentUser', req);
+
+    data.user = user;
+
     // Get file from request
     const file = prop('file', req);
 
@@ -31,7 +35,7 @@ const certeficationsController = (() => {
       validateFile(['pdf', 'png', 'jpg', 'jpeg'], file);
 
       // Store file to storage
-      const resultStorage = await fileStorageService.saveFile('certefications', file);
+      const resultStorage = await fileStorageService.saveFile('certefications', file, user);
 
       // verify file is stored successfuly
       if (!prop('ok', resultStorage)) {
@@ -62,6 +66,21 @@ const certeficationsController = (() => {
     res.status(200).json({ ok: true, data: certefication });
   };
 
+  const getUserCertefications = async (req, res) => {
+    // Get & validate Id
+    const userId = prop('currentUser', req);
+
+    validateId(userId);
+
+    // get data and verify if it exists
+    const certefications = await certeficationsService.getUserCertefications(userId);
+    if (!certefications) throw new Error('NO_CERTEFICATION_FOUND');
+
+    await getFilesAccessLinks(certefications, ['file']);
+
+    res.status(200).json({ ok: true, data: certefications });
+  };
+
   const getAll = async (req, res) => {
     // get data and verify if it exists
     const certefications = await certeficationsService.getAll();
@@ -83,6 +102,8 @@ const certeficationsController = (() => {
     // Validate updatedData getting from request
     validateCerteficationsData(updatedData);
 
+    const user = prop('currentUser', req);
+
     // Get file from request
     const file = prop('file', req);
 
@@ -92,7 +113,7 @@ const certeficationsController = (() => {
       validateFile(['pdf', 'png', 'jpg', 'jpeg'], file);
 
       // Store file to storage
-      const resultStorage = await fileStorageService.saveFile('certefications', file);
+      const resultStorage = await fileStorageService.saveFile('certefications', file, user);
 
       // verify file is stored successfuly
       if (!prop('ok', resultStorage)) {
@@ -101,12 +122,10 @@ const certeficationsController = (() => {
 
       // Create our final data
       updatedData.file = prop('fileName', resultStorage);
-    } else {
-      updatedData.file = null;
-    }
 
-    // Del old file
-    await certeficationsService.delFiles(id, ['file']);
+      // Del old file
+      await certeficationsService.delFiles(id, ['file']);
+    }
 
     // Add data to db
     await certeficationsService.updateOne(id, updatedData);
@@ -133,7 +152,8 @@ const certeficationsController = (() => {
     getById,
     getAll,
     updateOne,
-    delOne
+    delOne,
+    getUserCertefications
   };
 })();
 

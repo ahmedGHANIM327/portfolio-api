@@ -8,12 +8,15 @@ const {
   validateId
 } = require('../validation');
 const {
-  getFileAccessLink
+  getFileAccessLink,
+  getFilesAccessLinks
 } = require('../util/transformations');
 
 const profileController = (() => {
   const createProfile = async (req, res) => {
-    const isProfileCreated = await profileService.isProfileCreated();
+    const user = prop('currentUser', req);
+
+    const isProfileCreated = await profileService.isProfileCreated(user);
     if (isProfileCreated) {
       throw new Error('PROFILE_ALREADY_CREATED');
     }
@@ -21,6 +24,8 @@ const profileController = (() => {
 
     // Validate data getting from request
     validateProfileData(data);
+
+    data.user = user;
 
     // Get and save cv if exists
     const cv = path(['files', 'cv', 0], req);
@@ -30,7 +35,7 @@ const profileController = (() => {
       validateFile(['pdf'], cv);
 
       // Store diploma to storage
-      const resultStorage = await fileStorageService.saveFile('profile', cv);
+      const resultStorage = await fileStorageService.saveFile('profile', cv, user);
 
       // verify diploma is stored successfuly
       if (!prop('ok', resultStorage)) {
@@ -50,7 +55,7 @@ const profileController = (() => {
       validateFile(['png', 'jpg', 'jpeg'], photo);
 
       // Store photo to storage
-      const resultStorage = await fileStorageService.saveFile('profile', photo);
+      const resultStorage = await fileStorageService.saveFile('profile', photo, user);
 
       // verify photo is stored successfuly
       if (!prop('ok', resultStorage)) {
@@ -68,8 +73,13 @@ const profileController = (() => {
   };
 
   const getProfile = async (req, res) => {
+    // Get & validate user Id
+    const userId = prop('currentUser', req);
+
+    validateId(userId);
+
     // get data and verify if it exists
-    const profile = await profileService.getProfile();
+    const profile = await profileService.getProfile(userId);
     if (!profile) throw new Error('PROFILE_NOT_CREATED_YET');
 
     await getFileAccessLink(profile, ['cv', 'photo']);
@@ -77,8 +87,19 @@ const profileController = (() => {
     res.status(200).json({ ok: true, data: profile });
   };
 
+  const getAllProfiles = async (req, res) => {
+    // get data and verify if it exists
+    const profiles = await profileService.getAllProfiles();
+    if (!profiles) throw new Error('NO_PROFILE_FOUND');
+
+    await getFilesAccessLinks(profiles, ['cv', 'photo']);
+
+    res.status(200).json({ ok: true, data: profiles });
+  };
+
   const updateProfile = async (req, res) => {
-    const isProfileCreated = await profileService.isProfileCreated();
+    const user = prop('currentUser', req);
+    const isProfileCreated = await profileService.isProfileCreated(user);
     if (!isProfileCreated) {
       throw new Error('PROFILE_NOT_CREATED_YET');
     }
@@ -101,7 +122,7 @@ const profileController = (() => {
       validateFile(['pdf'], cv);
 
       // Store diploma to storage
-      const resultStorage = await fileStorageService.saveFile('profile', cv);
+      const resultStorage = await fileStorageService.saveFile('profile', cv, user);
 
       // verify diploma is stored successfuly
       if (!prop('ok', resultStorage)) {
@@ -110,8 +131,9 @@ const profileController = (() => {
 
       // Create our final data
       updatedData.cv = prop('fileName', resultStorage);
-    } else {
-      updatedData.cv = null;
+
+      // Del old file
+      await profileService.delFiles(id, ['cv']);
     }
 
     // Get and save profile photo if exists
@@ -123,7 +145,7 @@ const profileController = (() => {
       validateFile(['png', 'jpg', 'jpeg'], photo);
 
       // Store photo to storage
-      const resultStorage = await fileStorageService.saveFile('profile', photo);
+      const resultStorage = await fileStorageService.saveFile('profile', photo, user);
 
       // verify photo is stored successfuly
       if (!prop('ok', resultStorage)) {
@@ -132,12 +154,10 @@ const profileController = (() => {
 
       // Create our final data
       updatedData.photo = prop('fileName', resultStorage);
-    } else {
-      updatedData.photo = null;
-    }
 
-    // Del old file
-    await profileService.delFiles(id, ['cv', 'photo']);
+      // Del old file
+      await profileService.delFiles(id, ['photo']);
+    }
 
     // Add data to db
     await profileService.updateProfile(updatedData);
@@ -148,6 +168,7 @@ const profileController = (() => {
   return {
     createProfile,
     getProfile,
+    getAllProfiles,
     updateProfile
   };
 })();

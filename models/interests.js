@@ -5,6 +5,10 @@ const InterestsSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
   description: String,
   photo: String
 }, {

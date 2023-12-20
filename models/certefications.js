@@ -12,6 +12,10 @@ const certificationsSchema = new mongoose.Schema({
   dateOfIssue: {
     type: Date
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
   expiryDate: Date,
   file: String,
   website: String,

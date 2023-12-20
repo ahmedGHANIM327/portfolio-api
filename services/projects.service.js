@@ -13,6 +13,11 @@ const projectsService = (() => {
     return project;
   };
 
+  const getUserProjects = async (userId) => {
+    const projects = await Project.find({ user: userId });
+    return projects;
+  };
+
   const getAll = async () => {
     const projects = await Project.find();
     return projects;
@@ -44,7 +49,8 @@ const projectsService = (() => {
     getAll,
     updateOne,
     delOne,
-    delFiles
+    delFiles,
+    getUserProjects
   };
 })();
 

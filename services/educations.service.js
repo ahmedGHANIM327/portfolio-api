@@ -18,6 +18,11 @@ const educationsService = (() => {
     return educations;
   };
 
+  const getUserEducations = async (userId) => {
+    const educations = await Education.find({ user: userId });
+    return educations;
+  };
+
   const updateOne = async (id, updatedData) => {
     const education = await Education.findByIdAndUpdate(id, updatedData, { new: true });
     return education;
@@ -44,7 +49,8 @@ const educationsService = (() => {
     getAll,
     updateOne,
     delOne,
-    delFiles
+    delFiles,
+    getUserEducations
   };
 })();
 

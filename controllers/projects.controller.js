@@ -19,6 +19,10 @@ const projectsController = (() => {
     // Validate data getting from request
     validateProjectsData(data);
 
+    const user = prop('currentUser', req);
+
+    data.user = user;
+
     // Get file from request
     const image = prop('file', req);
 
@@ -28,7 +32,7 @@ const projectsController = (() => {
       validateFile(['png', 'jpg', 'jpeg'], image);
 
       // Store image to storage
-      const resultStorage = await fileStorageService.saveFile('projects', image);
+      const resultStorage = await fileStorageService.saveFile('projects', image, user);
 
       // verify image is stored successfuly
       if (!prop('ok', resultStorage)) {
@@ -59,6 +63,20 @@ const projectsController = (() => {
     res.status(200).json({ ok: true, data: project });
   };
 
+  const getUserProjects = async (req, res) => {
+    const userId = prop('currentUser', req);
+
+    validateId(userId);
+
+    // get data and verify if it exists
+    const projects = await projectsService.getUserProjects(userId);
+    if (!projects) throw new Error('NO_PROJECT_FOUND');
+
+    await getFilesAccessLinks(projects, ['image']);
+
+    res.status(200).json({ ok: true, data: projects });
+  };
+
   const getAll = async (req, res) => {
     // get data and verify if it exists
     const projects = await projectsService.getAll();
@@ -80,6 +98,8 @@ const projectsController = (() => {
     // Validate updatedData getting from request
     validateProjectsData(updatedData);
 
+    const user = prop('currentUser', req);
+
     // Get file from request
     const image = prop('file', req);
 
@@ -89,7 +109,7 @@ const projectsController = (() => {
       validateFile(['png', 'jpg', 'jpeg'], image);
 
       // Store file to storage
-      const resultStorage = await fileStorageService.saveFile('projects', image);
+      const resultStorage = await fileStorageService.saveFile('projects', image, user);
 
       // verify file is stored successfuly
       if (!prop('ok', resultStorage)) {
@@ -98,12 +118,10 @@ const projectsController = (() => {
 
       // Create our final data
       updatedData.image = prop('fileName', resultStorage);
-    } else {
-      updatedData.image = null;
-    }
 
-    // Del old file
-    await projectsService.delFiles(id, ['image']);
+      // Del old file
+      await projectsService.delFiles(id, ['image']);
+    }
 
     // Add data to db
     await projectsService.updateOne(id, updatedData);
@@ -130,7 +148,8 @@ const projectsController = (() => {
     getById,
     getAll,
     updateOne,
-    delOne
+    delOne,
+    getUserProjects
   };
 })();
 
